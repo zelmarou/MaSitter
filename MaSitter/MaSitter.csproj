@@ -173,6 +173,10 @@
   <ItemGroup>
     <Content Include="Content\bootstrap.css" />
     <Content Include="Content\bootstrap.min.css" />
+    <Content Include="Content\Images\baby-sitting-assurance-scolaire-medium-8253859.jpg" />
+    <Content Include="Content\Images\blue_and_white_stripes.jpg" />
+    <Content Include="Content\Images\paiement-sans-contact.jpg" />
+    <Content Include="Content\Images\woman3.jpg" />
     <Content Include="favicon.ico" />
     <Content Include="fonts\glyphicons-halflings-regular.svg" />
     <Content Include="Global.asax" />

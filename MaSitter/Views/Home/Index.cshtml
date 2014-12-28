@@ -3,29 +3,106 @@
 }
 
 <div class="jumbotron">
-    <h1>ASP.NET</h1>
-    <p class="lead">ASP.NET is a free web framework for building great Web sites and Web applications using HTML, CSS and JavaScript.</p>
-    <p><a href="http://asp.net" class="btn btn-primary btn-lg">Learn more &raquo;</a></p>
+    <div style="float:left">
+    <h1>MaSitter.fr</h1>
+    <p class="lead">Est un site de mise en relation famille et nounou</p>
+ @*   <p><a href="http://asp.net" class="btn btn-primary btn-lg">En savoir plus &raquo;</a></p>*@
+</div>
+    <div style="float:right">
+        <img src="~/Content/Images/woman3.jpg" height="200" />
+    </div>
+        <div style="clear : both"></div>
 </div>
 
-<div class="row">
+<div id="searchForm">
+    
+    <div id="Sitter" style="width:48%; background:#eeeeee;float:left;text-align:center;height:200px;">
+       <h2> Je cherche une sitter </h2>
+        <img src="~/Content/Images/baby-sitting-assurance-scolaire-medium-8253859.jpg" height="110"/>
+    </div>
+    <div id="Famille" style="width:48%;background:#eeeeee;float:right;text-align:center;height:200px;">
+        <h2> Je cherche une famille</h2> 
+        <img src="~/Content/Images/paiement-sans-contact.jpg" height="110" />
+    </div>
+  <div style="clear : both"></div>
+    <div style="width:300px;margin:auto;padding:0;text-align:center;padding-top:30px">
+        <input id="autocomplete" placeholder="Ville" type="text" autocomplete="off" style="text-align:center">
+        <br /><br />
+        <input type="submit" value="Va chercher !">
+      
+    </div>
+</div>
+
+<div class="row" style="text-align:center">
     <div class="col-md-4">
-        <h2>Getting started</h2>
+        <h2>Le guide de la babysitter</h2>
         <p>
             ASP.NET MVC gives you a powerful, patterns-based way to build dynamic websites that
             enables a clean separation of concerns and gives you full control over markup
             for enjoyable, agile development.
         </p>
-        <p><a class="btn btn-default" href="http://go.microsoft.com/fwlink/?LinkId=301865">Learn more &raquo;</a></p>
+        <p><a class="btn btn-default" href="http://go.microsoft.com/fwlink/?LinkId=301865">En savoir plus &raquo;</a></p>
     </div>
     <div class="col-md-4">
-        <h2>Get more libraries</h2>
+        <h2>Apprendre en video</h2>
         <p>NuGet is a free Visual Studio extension that makes it easy to add, remove, and update libraries and tools in Visual Studio projects.</p>
-        <p><a class="btn btn-default" href="http://go.microsoft.com/fwlink/?LinkId=301866">Learn more &raquo;</a></p>
+        <p><a class="btn btn-default" href="http://go.microsoft.com/fwlink/?LinkId=301866">En savoir plus &raquo;</a></p>
     </div>
     <div class="col-md-4">
-        <h2>Web Hosting</h2>
+        <h2>Contact</h2>
         <p>You can easily find a web hosting company that offers the right mix of features and price for your applications.</p>
-        <p><a class="btn btn-default" href="http://go.microsoft.com/fwlink/?LinkId=301867">Learn more &raquo;</a></p>
+        <p><a class="btn btn-default" href="http://go.microsoft.com/fwlink/?LinkId=301867">En savoir plus &raquo;</a></p>
     </div>
 </div>
+
+
+<script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?libraries=places"></script>
+
+<script type="text/javascript">
+
+    var placeSearch, autocomplete;
+    var component_form = {
+        'street_number': 'short_name',
+        'route': 'long_name',
+        'locality': 'long_name',
+        'administrative_area_level_1': 'short_name',
+        'country': 'long_name',
+        'postal_code': 'short_name'
+    };
+
+    function initialize() {
+        autocomplete = new google.maps.places.Autocomplete(document.getElementById('autocomplete'), { types: ['(cities)'] });
+        autocomplete.setComponentRestrictions({ 'country': 'fr' });
+        google.maps.event.addListener(autocomplete, 'place_changed', function () {
+            //fillInAddress();
+        });
+    }
+
+    function fillInAddress() {
+        var place = autocomplete.getPlace();
+
+        for (var component in component_form) {
+            document.getElementById(component).value = "";
+            document.getElementById(component).disabled = false;
+        }
+
+        for (var j = 0; j < place.address_components.length; j++) {
+            var att = place.address_components[j].types[0];
+            if (component_form[att]) {
+                var val = place.address_components[j][component_form[att]];
+                document.getElementById(att).value = val;
+            }
+        }
+    }
+
+    function geolocate() {
+        if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(function (position) {
+                var geolocation = new google.maps.LatLng(position.coords.latitude, position.coords.longitude);
+                autocomplete.setBounds(new google.maps.LatLngBounds(geolocation, geolocation));
+            });
+        }
+    }
+
+    initialize();
+</script>
