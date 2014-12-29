@@ -29,5 +29,7 @@ namespace MaSitter.Models
         {
             return new ApplicationDbContext();
         }
+
+        public System.Data.Entity.DbSet<MaSitter.Models.PersonalSpaceModel> PersonalSpaceModels { get; set; }
     }
 }
