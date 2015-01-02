@@ -18,5 +18,7 @@ namespace MaSitter.Models
         public DateTime BirthDate { get; set; }
         public string Text { get; set; }
         public float Price { get; set; }
+        public string Phone { get; set; }
+        public string City { get; set; }
     }
 }

@@ -7,23 +7,23 @@ using System.Threading.Tasks;
 using System.Net;
 using System.Web;
 using System.Web.Mvc;
-using Microsoft.AspNet.Identity;
 using MaSitter.Models;
+using Microsoft.AspNet.Identity;
 
 namespace MaSitter.Controllers
 {
     [Authorize]
-    public class PersonalSpacesController : Controller
+    public class PersonalSpaceController : Controller
     {
         private ApplicationDbContext db = new ApplicationDbContext();
 
-        // GET: PersonalSpaces
+        // GET: PersonalSpace
         public async Task<ActionResult> Index()
         {
             return View(await db.PersonalSpaceModels.ToListAsync());
         }
 
-        // GET: PersonalSpaces/Details/5
+        // GET: PersonalSpace/Details/5
         public async Task<ActionResult> Details(int? id)
         {
             if (id == null)
@@ -38,18 +38,18 @@ namespace MaSitter.Controllers
             return View(personalSpaceModel);
         }
 
-        // GET: PersonalSpaces/Create
+        // GET: PersonalSpace/Create
         public ActionResult Create()
         {
             return View();
         }
 
-        // POST: PersonalSpaces/Create
+        // POST: PersonalSpace/Create
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Create([Bind(Include = "id,user_id,FirstName,LastName,BirthDate,Text,Price")] PersonalSpaceModel personalSpaceModel)
+        public async Task<ActionResult> Create([Bind(Include = "id,user_id,FirstName,LastName,BirthDate,Text,Price,Phone,City")] PersonalSpaceModel personalSpaceModel)
         {
             if (ModelState.IsValid)
             {
@@ -62,7 +62,7 @@ namespace MaSitter.Controllers
             return View(personalSpaceModel);
         }
 
-        // GET: PersonalSpaces/Edit/5
+        // GET: PersonalSpace/Edit/5
         public async Task<ActionResult> Edit(int? id)
         {
             if (id == null)
@@ -77,12 +77,12 @@ namespace MaSitter.Controllers
             return View(personalSpaceModel);
         }
 
-        // POST: PersonalSpaces/Edit/5
+        // POST: PersonalSpace/Edit/5
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Edit([Bind(Include = "id,user_id,FirstName,LastName,BirthDate,Text,Price")] PersonalSpaceModel personalSpaceModel)
+        public async Task<ActionResult> Edit([Bind(Include = "id,user_id,FirstName,LastName,BirthDate,Text,Price,Phone,City")] PersonalSpaceModel personalSpaceModel)
         {
             if (ModelState.IsValid)
             {
@@ -93,7 +93,7 @@ namespace MaSitter.Controllers
             return View(personalSpaceModel);
         }
 
-        // GET: PersonalSpaces/Delete/5
+        // GET: PersonalSpace/Delete/5
         public async Task<ActionResult> Delete(int? id)
         {
             if (id == null)
@@ -108,7 +108,7 @@ namespace MaSitter.Controllers
             return View(personalSpaceModel);
         }
 
-        // POST: PersonalSpaces/Delete/5
+        // POST: PersonalSpace/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> DeleteConfirmed(int id)
