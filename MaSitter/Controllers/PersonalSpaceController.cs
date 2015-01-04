@@ -13,15 +13,27 @@ using PagedList;
 
 namespace MaSitter.Controllers
 {
-    [Authorize]
+    
     public class PersonalSpaceController : Controller
     {
         private ApplicationDbContext db = new ApplicationDbContext();
 
         // GET: PersonalSpace
+        [Authorize]
         public async Task<ActionResult> Index()
         {
-            return View(await db.PersonalSpaceModels.ToListAsync());
+            var currentUserGUID = User.Identity.GetUserId();
+
+            return View(await db.PersonalSpaceModels
+                .Where(e => e.user_id.ToString() == currentUserGUID)
+                .ToListAsync());
+        }
+        
+        private bool notYourPersonnalSpace(int id) {
+            var currentUserGUID = User.Identity.GetUserId();
+
+            return !db.PersonalSpaceModels
+                .Any(e => e.user_id.ToString() == currentUserGUID && e.id == id);
         }
 
         // GET: PersonalSpace/Details/5
@@ -31,6 +43,7 @@ namespace MaSitter.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
+            
             PersonalSpaceModel personalSpaceModel = await db.PersonalSpaceModels.FindAsync(id);
             if (personalSpaceModel == null)
             {
@@ -39,7 +52,7 @@ namespace MaSitter.Controllers
             return View(personalSpaceModel);
         }
 
-        // GET: PersonalSpace/Details/5
+        // GET: PersonalSpace/Search?City=Paris
         public ActionResult Search(string city, int? page)
         {
             var parsedCity = city.Split(',')[0].Trim();
@@ -52,6 +65,7 @@ namespace MaSitter.Controllers
         }
 
         // GET: PersonalSpace/Create
+        [Authorize]
         public ActionResult Create()
         {
             return View();
@@ -62,7 +76,8 @@ namespace MaSitter.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Create([Bind(Include = "id,user_id,FirstName,LastName,BirthDate,Text,Price,Phone,City,ImageFile")] PersonalSpaceModel personalSpaceModel)
+        [Authorize]
+        public async Task<ActionResult> Create([Bind(Include = "id,user_id,FirstName,LastName,BirthDate,Text,Price,Phone,City,ImageFile,isActive,isASitter")] PersonalSpaceModel personalSpaceModel)
         {
             if (ModelState.IsValid)
             {
@@ -78,7 +93,7 @@ namespace MaSitter.Controllers
             return View(personalSpaceModel);
         }
 
-
+        [Authorize]
         public async Task<ActionResult> CreateMany()
         {
             var firstnames = new string[]{"Emma",
@@ -189,12 +204,17 @@ namespace MaSitter.Controllers
         }
 
         // GET: PersonalSpace/Edit/5
+        [Authorize]
         public async Task<ActionResult> Edit(int? id)
         {
             if (id == null)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
+
+            if (notYourPersonnalSpace(id.Value))
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+
             PersonalSpaceModel personalSpaceModel = await db.PersonalSpaceModels.FindAsync(id);
             if (personalSpaceModel == null)
             {
@@ -208,8 +228,12 @@ namespace MaSitter.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Edit([Bind(Include = "id,user_id,FirstName,LastName,BirthDate,Text,Price,Phone,City,ImageFile,CreatedDate")] PersonalSpaceModel personalSpaceModel)
+        [Authorize]
+        public async Task<ActionResult> Edit([Bind(Include = "id,user_id,FirstName,LastName,BirthDate,Text,Price,Phone,City,ImageFile,CreatedDate,isActive,isASitter")] PersonalSpaceModel personalSpaceModel)
         {
+            if (notYourPersonnalSpace(personalSpaceModel.id))
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+
             if (ModelState.IsValid)
             {
                 db.Entry(personalSpaceModel).State = EntityState.Modified;
@@ -223,12 +247,17 @@ namespace MaSitter.Controllers
         }
 
         // GET: PersonalSpace/Delete/5
+        [Authorize]
         public async Task<ActionResult> Delete(int? id)
         {
             if (id == null)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
+
+            if(notYourPersonnalSpace(id.Value))
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+
             PersonalSpaceModel personalSpaceModel = await db.PersonalSpaceModels.FindAsync(id);
             if (personalSpaceModel == null)
             {
@@ -240,8 +269,12 @@ namespace MaSitter.Controllers
         // POST: PersonalSpace/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
+        [Authorize]
         public async Task<ActionResult> DeleteConfirmed(int id)
         {
+            if (notYourPersonnalSpace(id))
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+
             PersonalSpaceModel personalSpaceModel = await db.PersonalSpaceModels.FindAsync(id);
             db.PersonalSpaceModels.Remove(personalSpaceModel);
             await db.SaveChangesAsync();
