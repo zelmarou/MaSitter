@@ -22,6 +22,8 @@ namespace MaSitter.Models
         public string Phone { get; set; }
         public string City { get; set; }
         public bool isActive { get; set; }
+        public bool isASitter{ get; set; }
+
         public DateTime CreatedDate { get; set; }
         public DateTime UpdatedDate { get; set; }
 

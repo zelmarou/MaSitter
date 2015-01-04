@@ -67,7 +67,8 @@ namespace MaSitter.Controllers
             if (ModelState.IsValid)
             {
                 personalSpaceModel.user_id = new Guid(User.Identity.GetUserId());
-                personalSpaceModel.ImageFile.SaveAs(@"C:\Users\Zakaria\Source\MaSitter\MaSitter\Content\Images\Users\" + personalSpaceModel.user_id.ToString()+".jpg");
+                if (personalSpaceModel.ImageFile !=  null)
+                    personalSpaceModel.ImageFile.SaveAs(@"C:\Users\Zakaria\Source\MaSitter\MaSitter\Content\Images\Users\" + personalSpaceModel.user_id.ToString()+".jpg");
                 personalSpaceModel.CreatedDate = personalSpaceModel.UpdatedDate = DateTime.Now;
                 db.PersonalSpaceModels.Add(personalSpaceModel);
                 await db.SaveChangesAsync();
