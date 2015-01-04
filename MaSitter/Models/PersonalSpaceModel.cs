@@ -5,6 +5,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Web;
 
 namespace MaSitter.Models
 {
@@ -20,5 +21,19 @@ namespace MaSitter.Models
         public float Price { get; set; }
         public string Phone { get; set; }
         public string City { get; set; }
+        public bool isActive { get; set; }
+        public DateTime CreatedDate { get; set; }
+        public DateTime UpdatedDate { get; set; }
+
+        [NotMapped]
+        public HttpPostedFileBase ImageFile { get; set; }
+        [NotMapped]
+        public string ImageName
+        {
+            get
+            {
+                return this.user_id.ToString() + ".jpg"; 
+            }
+        }
     }
 }

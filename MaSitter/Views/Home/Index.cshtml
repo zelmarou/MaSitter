@@ -25,12 +25,18 @@
         <img src="~/Content/Images/paiement-sans-contact.jpg" height="110" />
     </div>
   <div style="clear : both"></div>
-    <div style="width:300px;margin:auto;padding:0;text-align:center;padding-top:30px">
-        <input id="autocomplete" placeholder="Ville" type="text" autocomplete="off" style="text-align:center">
-        <br /><br />
-        <input type="submit" value="Va chercher !">
-      
-    </div>
+    
+    @using (Html.BeginForm("Search", "PersonalSpace", FormMethod.Get))
+    {
+        <div style="width:300px;margin:auto;padding:0;text-align:center;padding-top:30px">
+            <input id="autocomplete" name="city" placeholder="Ville" type="text" autocomplete="off" style="text-align:center">
+            <br /><br />
+            <input type="submit" value="Va chercher !">
+
+        </div>
+    }
+
+
 </div>
 
 <div class="row" style="text-align:center">
