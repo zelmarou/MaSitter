@@ -77,7 +77,7 @@ namespace MaSitter.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize]
-        public async Task<ActionResult> Create([Bind(Include = "id,user_id,FirstName,LastName,BirthDate,Text,Price,Phone,City,ImageFile,isActive,isASitter")] PersonalSpaceModel personalSpaceModel)
+        public async Task<ActionResult> Create([Bind(Include = "id,user_id,FirstName,LastName,BirthDate,Title,Text,Price,Phone,City,ImageFile,isActive,isASitter")] PersonalSpaceModel personalSpaceModel)
         {
             if (ModelState.IsValid)
             {
@@ -229,7 +229,7 @@ namespace MaSitter.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize]
-        public async Task<ActionResult> Edit([Bind(Include = "id,user_id,FirstName,LastName,BirthDate,Text,Price,Phone,City,ImageFile,CreatedDate,isActive,isASitter")] PersonalSpaceModel personalSpaceModel)
+        public async Task<ActionResult> Edit([Bind(Include = "id,user_id,FirstName,LastName,BirthDate,Title,Text,Price,Phone,City,ImageFile,CreatedDate,isActive,isASitter")] PersonalSpaceModel personalSpaceModel)
         {
             if (notYourPersonnalSpace(personalSpaceModel.id))
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
