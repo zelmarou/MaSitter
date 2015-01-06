@@ -13,7 +13,7 @@ using PagedList;
 
 namespace MaSitter.Controllers
 {
-    
+
     public class PersonalSpaceController : Controller
     {
         private ApplicationDbContext db = new ApplicationDbContext();
@@ -28,8 +28,9 @@ namespace MaSitter.Controllers
                 .Where(e => e.user_id.ToString() == currentUserGUID)
                 .ToListAsync());
         }
-        
-        private bool notYourPersonnalSpace(int id) {
+
+        private bool notYourPersonnalSpace(int id)
+        {
             var currentUserGUID = User.Identity.GetUserId();
 
             return !db.PersonalSpaceModels
@@ -43,7 +44,7 @@ namespace MaSitter.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            
+
             PersonalSpaceModel personalSpaceModel = await db.PersonalSpaceModels.FindAsync(id);
             if (personalSpaceModel == null)
             {
@@ -56,7 +57,7 @@ namespace MaSitter.Controllers
         public ActionResult Search(string city, int? page)
         {
             var parsedCity = city.Split(',')[0].Trim();
-            var personalSpaceModel =  db.PersonalSpaceModels.Where(e => e.City == parsedCity).OrderBy(f => f.FirstName);
+            var personalSpaceModel = db.PersonalSpaceModels.Where(e => e.City == parsedCity).OrderBy(f => f.FirstName);
 
             int pageSize = 3;
             int pageNumber = (page ?? 1);
@@ -82,8 +83,8 @@ namespace MaSitter.Controllers
             if (ModelState.IsValid)
             {
                 personalSpaceModel.user_id = new Guid(User.Identity.GetUserId());
-                if (personalSpaceModel.ImageFile !=  null)
-                    personalSpaceModel.ImageFile.SaveAs(@"C:\Users\Zakaria\Source\MaSitter\MaSitter\Content\Images\Users\" + personalSpaceModel.user_id.ToString()+".jpg");
+                if (personalSpaceModel.ImageFile != null)
+                    personalSpaceModel.ImageFile.SaveAs(@"C:\Users\Zakaria\Source\MaSitter\MaSitter\Content\Images\Users\" + personalSpaceModel.user_id.ToString() + ".jpg");
                 personalSpaceModel.CreatedDate = personalSpaceModel.UpdatedDate = DateTime.Now;
                 db.PersonalSpaceModels.Add(personalSpaceModel);
                 await db.SaveChangesAsync();
@@ -147,7 +148,7 @@ namespace MaSitter.Controllers
                                             "Eloïse",
                                             "Lina"};
 
-            var cities =  new string[] {"Paris",
+            var cities = new string[] {"Paris",
                                             "Boulogne-Billancourt", 	 	
                                             "Argenteuil", 	 	
                                             "Montreuil", 	 	
@@ -189,17 +190,20 @@ namespace MaSitter.Controllers
                                             "Chelles"};
 
             Random random = new Random();
-            for(int i = 0; i < 1000; i++)
+            for (int i = 0; i < 1000; i++)
             {
                 PersonalSpaceModel personalSpaceModel = new PersonalSpaceModel();
-                personalSpaceModel.FirstName = firstnames[random.Next(0, firstnames.Length -1)];
-                personalSpaceModel.City = cities [random.Next(0, cities.Length - 1)];
+                personalSpaceModel.FirstName = firstnames[random.Next(0, firstnames.Length - 1)];
+                personalSpaceModel.City = cities[random.Next(0, cities.Length - 1)];
                 personalSpaceModel.BirthDate = new DateTime(1986, 1, 28);
                 personalSpaceModel.user_id = new Guid(User.Identity.GetUserId());
+                personalSpaceModel.Title = "Annonce n°" + i;
+
+                personalSpaceModel.CreatedDate = personalSpaceModel.UpdatedDate = DateTime.Now;
                 db.PersonalSpaceModels.Add(personalSpaceModel);
                 await db.SaveChangesAsync();
-           }
-            
+            }
+
             return RedirectToAction("Index");
         }
 
@@ -237,7 +241,7 @@ namespace MaSitter.Controllers
             if (ModelState.IsValid)
             {
                 db.Entry(personalSpaceModel).State = EntityState.Modified;
-                if (personalSpaceModel.ImageFile !=  null)
+                if (personalSpaceModel.ImageFile != null)
                     personalSpaceModel.ImageFile.SaveAs(@"C:\Users\Zakaria\Source\MaSitter\MaSitter\Content\Images\Users\" + personalSpaceModel.user_id.ToString() + ".jpg");
                 personalSpaceModel.UpdatedDate = DateTime.Now;
                 await db.SaveChangesAsync();
@@ -255,7 +259,7 @@ namespace MaSitter.Controllers
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
 
-            if(notYourPersonnalSpace(id.Value))
+            if (notYourPersonnalSpace(id.Value))
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
 
             PersonalSpaceModel personalSpaceModel = await db.PersonalSpaceModels.FindAsync(id);
@@ -278,6 +282,44 @@ namespace MaSitter.Controllers
             PersonalSpaceModel personalSpaceModel = await db.PersonalSpaceModels.FindAsync(id);
             db.PersonalSpaceModels.Remove(personalSpaceModel);
             await db.SaveChangesAsync();
+            return RedirectToAction("Index");
+        }
+
+        // POST: PersonalSpace/AddBookMark/5
+        //[HttpPost, ActionName("AddBookmark")]
+        //[ValidateAntiForgeryToken]
+        [Authorize]
+        public async Task<ActionResult> AddBookmark(int id)
+        {
+            if (db.PersonalSpaceModels.Any(e => e.id == id))
+            {
+                var currentUserGUID = User.Identity.GetUserId();
+
+                PersonalSpaceModel personalSpaceModel = db.PersonalSpaceModels.Single(e => e.user_id.ToString() == currentUserGUID);
+                if (!personalSpaceModel.BookmarkList.Contains(id))
+                    personalSpaceModel.BookmarkList.Add(id);
+                personalSpaceModel.Bookmarks = String.Join(",", personalSpaceModel.BookmarkList);
+                await db.SaveChangesAsync();
+            }
+            return RedirectToAction("Index");
+        }
+
+        // POST: PersonalSpace/AddBookMark/5
+        //[HttpPost, ActionName("AddBookmark")]
+        //[ValidateAntiForgeryToken]
+        [Authorize]
+        public async Task<ActionResult> DeleteBookmark(int id)
+        {
+            if (db.PersonalSpaceModels.Any(e => e.id == id))
+            {
+                var currentUserGUID = User.Identity.GetUserId();
+
+                PersonalSpaceModel personalSpaceModel = db.PersonalSpaceModels.Single(e => e.user_id.ToString() == currentUserGUID);
+                if (personalSpaceModel.BookmarkList.Contains(id))
+                    personalSpaceModel.BookmarkList.Remove(id);
+                personalSpaceModel.Bookmarks = String.Join(",", personalSpaceModel.BookmarkList);
+                await db.SaveChangesAsync();
+            }
             return RedirectToAction("Index");
         }
 

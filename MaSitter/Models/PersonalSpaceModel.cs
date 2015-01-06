@@ -23,8 +23,8 @@ namespace MaSitter.Models
         public string Phone { get; set; }
         public string City { get; set; }
         public bool isActive { get; set; }
-        public bool isASitter{ get; set; }
-
+        public bool isASitter { get; set; }
+        public string Bookmarks { get; set; }
         public DateTime CreatedDate { get; set; }
         public DateTime UpdatedDate { get; set; }
 
@@ -35,7 +35,27 @@ namespace MaSitter.Models
         {
             get
             {
-                return this.user_id.ToString() + ".jpg"; 
+                return this.user_id.ToString() + ".jpg";
+            }
+        }
+
+        [NotMapped]
+        private List<int> _b;
+
+        [NotMapped]
+        public List<int> BookmarkList
+        {
+            get
+            {
+                if (this.Bookmarks == null)
+                    this.Bookmarks = string.Empty;
+                if (_b == null)
+                    if (!string.IsNullOrEmpty(this.Bookmarks))
+                        _b = this.Bookmarks.Split(',').Select(e => int.Parse(e)).Distinct().ToList();
+                    else
+                        _b = new List<int>();
+
+                return _b;
             }
         }
     }
